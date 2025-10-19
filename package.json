@@ -4,12 +4,24 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/mongoose": "^5.11.97",
+    "@types/node": "^24.8.1",
+    "ts-node": "^10.9.2"
+  },
+  "scripts": {
+    "dev": "bun --watch src/index.ts"
   },
   "peerDependencies": {
-    "typescript": "^5"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mongoose": "^8.19.1"
   }
 }
