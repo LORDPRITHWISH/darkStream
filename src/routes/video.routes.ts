@@ -5,6 +5,7 @@ import { streamVideo } from "../controllers/video.controller";
 const router = Router();
 
 // Stream a video by filename
-router.get("/watch/:filename", streamVideo);
+router.get("/watch/:filepath", streamVideo);
 
 export default router;
+    
