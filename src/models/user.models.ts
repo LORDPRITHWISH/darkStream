@@ -2,8 +2,30 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+interface IUser extends Document {
+  _id: mongoose.Types.ObjectId;
+  username: string;
+  email: string;
+  password: string;
+  name: string;
+  channelname?: string;
+  profilepic: string; 
+  bio: string;
+  coverimage: string;
+  watchHistory: mongoose.Types.ObjectId[];
+  refereshToken: string;
+  isVerified: boolean;
+  isAdmin: boolean;
+  isBanned: boolean;
+  subscriberCount: number;
 
-const userSchema = new Schema(
+  // Custom methods
+  isPasswordCorrect(password: string): Promise<boolean>;
+  generateAccessToken(): string;
+  generateRefreshToken(): string;
+}
+
+const userSchema = new Schema<IUser>(
   {
     username: {
       type: String,

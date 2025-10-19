@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { Test } from '../controllers/action.controller';
+import { getDirectoryContents, Test } from '../controllers/action.controller';
 
 
 const router = Router();
 
+router.route("/items").get(getDirectoryContents);
 router.route("/test").get(Test);
 
-export default router
+export default router;

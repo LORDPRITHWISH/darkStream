@@ -6,7 +6,7 @@ import { ApiError } from "../utils/ApiError.js";
 
 const BASE_DIR = "./DarkStorage"; // Root directory
 
-const Test = asyncHandeler(async (req, res) => {
+const getDirectoryContents = asyncHandeler(async (req, res) => {
   const { folder = "" } = req.query; // e.g., ?currentPath=/videos
 
   const currentPath =
@@ -38,4 +38,20 @@ const Test = asyncHandeler(async (req, res) => {
   }
 });
 
-export { Test };
+const Test = asyncHandeler(async (req, res) => {
+
+  const original = "Hello World";
+
+  const encoded = Buffer.from(original, "utf8").toString("base64");
+
+  console.log("encoded", encoded);
+
+  const decoded = Buffer.from(encoded, "base64").toString("utf8");
+
+  return res
+    .status(200)
+    .json(new ApiResponce(200, "Test successful", { message: decoded }));
+});
+
+
+export { getDirectoryContents, Test };

@@ -16,8 +16,8 @@ const genetateAccessAnsRefreshToken = async (userId: string) => {
       throw new ApiError(500, "User not found");
     }
     // console.log("user found for token generation", user);
-    const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
+    const accessToken = (user as any).generateAccessToken();
+    const refreshToken = (user as any).generateRefreshToken();
 
     // console.log("accessToken", accessToken);
     // console.log("refreshToken", refreshToken);
@@ -35,7 +35,7 @@ const genetateAccessAnsRefreshToken = async (userId: string) => {
 };
 
 const registerUser = asyncHandeler(async (req, res) => {
-  console.log("FILES RECEIVED:", req.files);
+  // console.log("FILES RECEIVED:", req.files);
 
   const { fullname, email, username, password } = req.body;
 
@@ -161,7 +161,7 @@ const loginUser = asyncHandeler(async (req, res) => {
 
   // console.log("user found", user);
 
-  const isPasswordValid = await user.isPasswordCorrect(password);
+  const isPasswordValid = await (user as any).isPasswordCorrect(password);
 
   // console.log("isPasswordValid", isPasswordValid);
 
@@ -170,7 +170,7 @@ const loginUser = asyncHandeler(async (req, res) => {
   }
 
   const { accessToken, refreshToken } = await genetateAccessAnsRefreshToken(
-    user._id
+    user._id.toString()
   );
 
   const loggedInUser = await User.findById(user._id).select(
@@ -263,7 +263,7 @@ const refreshAccessToken = asyncHandeler(async (req, res) => {
       }
 
       const { accessToken, refreshToken: newrefreshToken } =
-        await genetateAccessAnsRefreshToken(user._id);
+        await genetateAccessAnsRefreshToken(user._id.toString());
 
       const options = {
         httpOnly: true,
@@ -310,7 +310,7 @@ const changePassword = asyncHandeler(async (req, res) => {
     throw new ApiError(404, "User not found");
   }
 
-  const isPasswordValid = await user.isPasswordCorrect(oldPassword);
+  const isPasswordValid = await (user as any).isPasswordCorrect(oldPassword);
   if (!isPasswordValid) {
     throw new ApiError(401, "Incorrect old password");
   }
