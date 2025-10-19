@@ -1,44 +1,41 @@
-import mongoose, { isValidObjectId } from "mongoose";
-import { ApiError } from "../utils/ApiError.js";
-import { asyncHandeler } from "../utils/asyncHandelers.js";
-import { ApiResponce } from "../utils/ApiResponce.js";
-// import { readdir } from "fs/promises";
-// import { redisClient } from "../utils/redis.js";
-
 import { readdir, stat } from "fs/promises";
 import path from "path";
+import { asyncHandeler } from "../utils/asyncHandelers.js";
+import { ApiResponce } from "../utils/ApiResponce.js";
+import { ApiError } from "../utils/ApiError.js";
 
-// async function getAllFiles(dir) {
-//   const entries = await readdir(dir);
-//   const files = await Promise.all(
-//     entries.map(async (entry) => {
-//       const filePath = path.join(dir, entry);
-//       const info = await stat(filePath);
-//       if (info.isDirectory()) {
-//         return getAllFiles(filePath);
-//       } else {
-//         return filePath;
-//       }
-//     })
-//   );
-//   return files.flat();
-// }
+const BASE_DIR = "./DarkStorage"; // Root directory
 
 const Test = asyncHandeler(async (req, res) => {
-//   const allFiles = await getAllFiles("./DarkStorage");
-//   console.log(allFiles);
-  // const items = await readdir("./DarkStorage");
-  // // console.log(files);
-  // const videoFiles = items.filter(file => file.endsWith(".mp4"));
+  const { folder = "" } = req.query; // e.g., ?currentPath=/videos
 
-  // const folder = items.filter(item => !item.includes("."));
+  const currentPath =
+    typeof folder === "string" ? folder : Array.isArray(folder) && typeof folder[0] === "string" ? folder[0] : "";
 
-  // console.log("Video Files:", videoFiles);
-  // console.log("Folders:", folder);
+  const targetPath = path.join(BASE_DIR, currentPath);
 
-  return res
-    .status(200)
-    .json(new ApiResponce(200, "Test route is working", { dark: "666" }));
+  try {
+    const entries = await readdir(targetPath);
+    const data = [];
+
+    for (const entry of entries) {
+      const fullPath = path.join(targetPath, entry);
+      const stats = await stat(fullPath);
+
+      data.push({
+        name: entry,
+        type: stats.isDirectory() ? "folder" : "file",
+        relativePath: path.join(currentPath, entry), // for next traversal
+        originalPath: fullPath, // absolute path
+      });
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponce(200, "Directory fetched", data));
+  } catch (err) {
+    throw new ApiError(404, `Path not found: ${currentPath}`);
+  }
 });
 
 export { Test };
